@@ -1,54 +1,53 @@
-﻿body {
-  font-family: 'Press Start 2P', monospace;
-  background: #2b2b2b;
-  color: #e6e2d3;
+body {
+  background: #000;
+  color: #39ff14;
+  font-family: "Courier New", monospace;
   padding: 16px;
 }
 
-
 h1, h2 {
   text-align: center;
-  color: #b5d99c;
+  border-bottom: 1px solid #39ff14;
+  padding-bottom: 6px;
 }
-
 
 section {
   margin-bottom: 20px;
 }
 
-
 .item {
-  background: #3a3a3a;
-  border: 3px solid #6b705c;
+  border: 1px solid #39ff14;
   padding: 10px;
   margin-bottom: 8px;
 }
 
-
-.categoria {
-  color: #cb997e;
-  font-size: 10px;
-}
-
-
 input {
   width: 100%;
-  margin: 4px 0;
+  background: #000;
+  color: #39ff14;
+  border: 1px solid #39ff14;
   padding: 6px;
+  margin: 4px 0;
   font-family: inherit;
 }
 
-
 button {
   width: 100%;
+  background: #000;
+  color: #39ff14;
+  border: 1px solid #39ff14;
   padding: 10px;
-  background: #a5a58d;
-  border: none;
   font-family: inherit;
   cursor: pointer;
 }
 
-
 button:hover {
-  background: #b7b7a4;
+  background: #39ff14;
+  color: #000;
+}
+
+.excluir {
+  color: #ff5555;
+  cursor: pointer;
+  float: right;
 }
