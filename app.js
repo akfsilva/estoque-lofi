@@ -24,7 +24,7 @@ const estoquePadrao = [
   // LIMPEZA
   { nome: "Bucha (pacote)", categoria: "Limpeza", meta: 12, atual: 2 },
   { nome: "Sabão caseiro (barra)", categoria: "Limpeza", meta: 24, atual: 10 },
-  { nome: "Papel absorvente", categoria: "Limpeza", meta: 12, atual: 1 }
+  { nome: "Papel toalha", categoria: "Limpeza", meta: 12, atual: 1 }
 ];
 
 let itens = JSON.parse(localStorage.getItem("estoque")) || estoquePadrao;
@@ -92,3 +92,4 @@ function gerarPlano() {
 
 salvar();
 render();
+
