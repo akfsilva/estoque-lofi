@@ -1,27 +1,14 @@
 const estoquePadrao = [
   { nome: "Arroz (kg)", categoria: "Alimentos", atual: 16, meta: 48 },
   { nome: "Feijão (kg)", categoria: "Alimentos", atual: 4, meta: 12 },
-  { nome: "Macarrão parafuso (kg)", categoria: "Alimentos", atual: 2, meta: 12 },
+  { nome: "Macarrão (kg)", categoria: "Alimentos", atual: 2, meta: 12 },
   { nome: "Sal (kg)", categoria: "Alimentos", atual: 1, meta: 1 },
-  { nome: "Açúcar cristal (kg)", categoria: "Alimentos", atual: 4.5, meta: 6 },
-  { nome: "Óleo de soja (L)", categoria: "Alimentos", atual: 3, meta: 12 },
-  { nome: "Óleo misto (L)", categoria: "Alimentos", atual: 1, meta: 6 },
-  { nome: "Molho de tomate (sachê)", categoria: "Alimentos", atual: 3, meta: 24 },
-  { nome: "Sardinha (lata)", categoria: "Alimentos", atual: 2, meta: 24 },
-  { nome: "Cappuccino (g)", categoria: "Alimentos", atual: 200, meta: 1000 },
-  { nome: "Geleia (un)", categoria: "Alimentos", atual: 1, meta: 6 },
-  { nome: "Café descafeinado (g)", categoria: "Alimentos", atual: 250, meta: 2000 },
+  { nome: "Açúcar (kg)", categoria: "Alimentos", atual: 4.5, meta: 6 },
 
-  { nome: "Sabonete antibacteriano", categoria: "Higiene", atual: 14, meta: 48 },
-  { nome: "Sabonete comum", categoria: "Higiene", atual: 7, meta: 48 },
-  { nome: "Desodorante antibacteriano", categoria: "Higiene", atual: 1, meta: 12 },
-  { nome: "Desodorante comum", categoria: "Higiene", atual: 1, meta: 12 },
-  { nome: "Pasta dente sensível", categoria: "Higiene", atual: 2, meta: 12 },
-  { nome: "Pasta dente comum", categoria: "Higiene", atual: 3, meta: 12 },
+  { nome: "Sabonete", categoria: "Higiene", atual: 21, meta: 48 },
+  { nome: "Pasta de dente", categoria: "Higiene", atual: 5, meta: 12 },
 
-  { nome: "Bucha (pacote)", categoria: "Limpeza", atual: 2, meta: 12 },
-  { nome: "Sabão caseiro (barra)", categoria: "Limpeza", atual: 10, meta: 24 },
-  { nome: "Papel toalha", categoria: "Limpeza", atual: 1, meta: 12 }
+  { nome: "Sabão em barra", categoria: "Limpeza", atual: 10, meta: 24 }
 ];
 
 let itens = JSON.parse(localStorage.getItem("estoque")) || estoquePadrao;
@@ -47,45 +34,52 @@ function render() {
         const box = document.createElement("div");
         box.className = "item";
         box.innerHTML = `
+          <span class="excluir" onclick="excluirItem(${index})">[ X ]</span>
           <strong>${item.nome}</strong><br>
           Atual:
           <input type="number" value="${item.atual}"
-            onchange="atualizarAtual(${index}, this.value)">
+            onchange="itemAtual(${index}, this.value)">
           Meta:
           <input type="number" value="${item.meta}"
-            onchange="atualizarMeta(${index}, this.value)">
+            onchange="itemMeta(${index}, this.value)">
         `;
         div.appendChild(box);
       });
   });
 }
 
-function atualizarAtual(i, valor) {
+function itemAtual(i, valor) {
   itens[i].atual = Number(valor);
   salvar();
 }
 
-function atualizarMeta(i, valor) {
+function itemMeta(i, valor) {
   itens[i].meta = Number(valor);
   salvar();
 }
 
-function adicionarItem() {
-  const nome = document.getElementById("nome").value;
-  const categoria = document.getElementById("categoria").value;
-  const atual = Number(document.getElementById("atual").value);
-  const meta = Number(document.getElementById("meta").value);
+function excluirItem(i) {
+  itens.splice(i, 1);
+  salvar();
+  render();
+}
 
-  if (!nome || !categoria || isNaN(atual) || isNaN(meta)) return;
+function adicionarItem() {
+  const nome = nomeEl.value;
+  const categoria = categoriaEl.value;
+  const atual = Number(atualEl.value);
+  const meta = Number(metaEl.value);
+
+  if (!nome || !categoria) return;
 
   itens.push({ nome, categoria, atual, meta });
   salvar();
   render();
 
-  document.getElementById("nome").value = "";
-  document.getElementById("categoria").value = "";
-  document.getElementById("atual").value = "";
-  document.getElementById("meta").value = "";
+  nomeEl.value = "";
+  categoriaEl.value = "";
+  atualEl.value = "";
+  metaEl.value = "";
 }
 
 function gerarPlano() {
@@ -95,9 +89,14 @@ function gerarPlano() {
     .slice(0, 2);
 
   document.getElementById("plano").innerHTML =
-    "<h2>Comprar este mês:</h2>" +
-    plano.map(p => `<p>• ${p.nome}</p>`).join("");
+    "<h2>PLANO DO MÊS</h2>" +
+    plano.map(p => `<p>▸ ${p.nome}</p>`).join("");
 }
+
+const nomeEl = document.getElementById("nome");
+const categoriaEl = document.getElementById("categoria");
+const atualEl = document.getElementById("atual");
+const metaEl = document.getElementById("meta");
 
 render();
 salvar();
