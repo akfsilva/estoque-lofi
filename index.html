@@ -1,36 +1,242 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Estoque Doméstico</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Estoque Doméstico</title>
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1f0b">
+<link rel="manifest" href="manifest.json">
+
+<style>
+:root {
+  --green: #33ff66;
+  --bg: #000000;
+  --border: #1aff5c;
+  --glow: 0 0 8px rgba(51,255,102,.6);
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Courier New", monospace;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--green);
+}
+
+.container {
+  padding: 16px;
+  max-width: 900px;
+  margin: auto;
+}
+
+h1, h2 {
+  text-align: center;
+  text-shadow: var(--glow);
+}
+
+hr {
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+input, button, select {
+  width: 100%;
+  background: #000;
+  color: var(--green);
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+button {
+  cursor: pointer;
+  text-shadow: var(--glow);
+}
+
+button:hover {
+  background: rgba(51,255,102,.1);
+}
+
+.category {
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.category-header {
+  padding: 12px;
+  font-size: 18px;
+  cursor: pointer;
+  background: rgba(0,255,100,.05);
+}
+
+.category-content {
+  display: none;
+  padding: 10px;
+}
+
+.item {
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-btn {
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+label {
+  font-size: 14px;
+}
+
+.scanlines::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+</style>
 </head>
 
-<body>
+<body class="scanlines">
+<div class="container">
 
-  <h1>▌ ESTOQUE DOMÉSTICO ▐</h1>
+<h1>ESTOQUE DOMÉSTICO</h1>
 
-  <section id="form">
-    <h2>ADICIONAR ITEM</h2>
+<hr>
 
-    <input id="nome" placeholder="Nome do item">
-    <input id="categoria" placeholder="Categoria">
-    <input id="atual" type="number" placeholder="Quantidade atual">
-    <input id="meta" type="number" placeholder="Meta anual">
+<h2>Adicionar item</h2>
 
-    <button onclick="adicionarItem()">[ ADICIONAR ]</button>
-  </section>
+<input id="name" placeholder="Nome do item">
+<input id="category" placeholder="Categoria (ex: Alimentos)">
+<input id="current" type="number" placeholder="Quantidade atual">
+<input id="goal" type="number" placeholder="Meta anual">
 
-  <section id="estoque"></section>
+<button onclick="addItem()">ADICIONAR</button>
 
-  <button onclick="gerarPlano()">[ PLANO DO MÊS ]</button>
+<hr>
 
-  <section id="plano"></section>
+<div id="categories"></div>
 
-  <script src="app.js"></script>
+</div>
+
+<script>
+const STORAGE_KEY = "estoque_domestico";
+
+function loadItems() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveItems(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+function addItem() {
+  const items = loadItems();
+  const item = {
+    id: Date.now(),
+    name: name.value.trim(),
+    category: category.value.trim(),
+    current: Number(current.value),
+    goal: Number(goal.value)
+  };
+
+  if (!item.name || !item.category) return;
+
+  items.push(item);
+  saveItems(items);
+  render();
+
+  name.value = category.value = current.value = goal.value = "";
+}
+
+function deleteItem(id) {
+  const items = loadItems().filter(i => i.id !== id);
+  saveItems(items);
+  render();
+}
+
+function updateItem(id, field, value) {
+  const items = loadItems();
+  const item = items.find(i => i.id === id);
+  item[field] = Number(value);
+  saveItems(items);
+}
+
+function toggleCategory(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === "none" ? "block" : "none";
+}
+
+function render() {
+  const container = document.getElementById("categories");
+  container.innerHTML = "";
+
+  const items = loadItems();
+  const grouped = {};
+
+  items.forEach(i => {
+    if (!grouped[i.category]) grouped[i.category] = [];
+    grouped[i.category].push(i);
+  });
+
+  Object.keys(grouped).forEach(cat => {
+    const catId = "cat_" + cat.replace(/\s/g, "_");
+
+    const catDiv = document.createElement("div");
+    catDiv.className = "category";
+
+    catDiv.innerHTML = `
+      <div class="category-header" onclick="toggleCategory('${catId}')">
+        ${cat}
+      </div>
+      <div class="category-content" id="${catId}">
+        ${grouped[cat].map(i => `
+          <div class="item">
+            <div class="item-header">
+              <strong>${i.name}</strong>
+              <span class="delete-btn" onclick="deleteItem(${i.id})">X</span>
+            </div>
+
+            <label>Atual</label>
+            <input type="number" value="${i.current}"
+              onchange="updateItem(${i.id}, 'current', this.value)">
+
+            <label>Meta anual</label>
+            <input type="number" value="${i.goal}"
+              onchange="updateItem(${i.id}, 'goal', this.value)">
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    container.appendChild(catDiv);
+  });
+}
+
+render();
+</script>
+
 </body>
 </html>
-
