@@ -1,0 +1,8 @@
+﻿{
+  "name": "Estoque Lofi",
+  "short_name": "Estoque",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#2b2b2b",
+  "theme_color": "#2b2b2b"
+}

@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Estoque Lofi</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+<h1>📦 Estoque Doméstico</h1>
+
+
+<section id="form">
+  <h2>➕ Novo item</h2>
+  <input id="nome" placeholder="Item">
+  <input id="categoria" placeholder="Categoria">
+  <input id="meta" type="number" placeholder="Meta anual">
+  <button onclick="adicionarItem()">Adicionar</button>
+</section>
+
+
+<section id="estoque"></section>
+
+
+<button onclick="gerarPlano()">🛒 Plano do mês</button>
+<section id="plano"></section>
+
+
+<script src="app.js"></script>
+</body>
+</html>
