@@ -1,34 +1,65 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Estoque Lofi</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+  <title>Estoque Doméstico</title>
+
+  <!-- Fonte pixel / lofi -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2b2b2b">
 </head>
+
 <body>
 
+  <h1>📦 Estoque Doméstico</h1>
 
-<h1>📦 Estoque Doméstico</h1>
+  <!-- FORMULÁRIO DE NOVO ITEM -->
+  <section id="form">
+    <h2>➕ Novo item</h2>
 
+    <input
+      id="nome"
+      type="text"
+      placeholder="Nome do item (ex: Papel higiênico)"
+    >
 
-<section id="form">
-  <h2>➕ Novo item</h2>
-  <input id="nome" placeholder="Item">
-  <input id="categoria" placeholder="Categoria">
-  <input id="meta" type="number" placeholder="Meta anual">
-  <button onclick="adicionarItem()">Adicionar</button>
-</section>
+    <input
+      id="categoria"
+      type="text"
+      placeholder="Categoria (ex: Limpeza, Higiene, Alimentos)"
+    >
 
+    <input
+      id="atual"
+      type="number"
+      placeholder="Quantidade atual"
+    >
 
-<section id="estoque"></section>
+    <input
+      id="meta"
+      type="number"
+      placeholder="Meta anual"
+    >
 
+    <button onclick="adicionarItem()">Adicionar item</button>
+  </section>
 
-<button onclick="gerarPlano()">🛒 Plano do mês</button>
-<section id="plano"></section>
+  <!-- LISTA DE ESTOQUE -->
+  <section id="estoque"></section>
 
+  <!-- PLANO MENSAL -->
+  <button onclick="gerarPlano()">🛒 Plano de compra do mês</button>
 
-<script src="app.js"></script>
+  <section id="plano"></section>
+
+  <!-- SCRIPT -->
+  <script src="app.js"></script>
+
 </body>
 </html>
