@@ -89,8 +89,6 @@ window.del = function(id){
 window.render = function(){
     const out = document.getElementById("estoque");
     out.innerHTML = "";
-    
-    // Força a limpeza de espaços antes de agrupar
     const cats = [...new Set(items.map(i => i.cat.trim().toUpperCase()))].sort();
     
     cats.forEach(cat => {
