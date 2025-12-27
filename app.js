@@ -1,4 +1,4 @@
-const KEY = "estoque_domestico_vfinal";
+const KEY = "estoque_v2";
 
 const baseItems = [
   {name:"Arroz",cat:"ALIMENTOS",qty:16,goal:48},
@@ -150,3 +150,4 @@ if ('serviceWorker' in navigator) {
 }
 
 render();
+
