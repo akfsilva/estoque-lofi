@@ -1,11 +1,9 @@
 const KEY = "vault_stock_final_v25";
 
-// Persistência de dados
 if (navigator.storage && navigator.storage.persist) {
     navigator.storage.persist();
 }
 
-// A SUA LISTA REAL - EXATAMENTE COMO PASSADA
 const baseItems = [
   {name:"Arroz", cat:"ALIMENTOS", unit:"KG", qty:16, goal:48, cons:0.100, note:""},
   {name:"Feijão", cat:"ALIMENTOS", unit:"KG", qty:4, goal:24, cons:0.150, note:""},
