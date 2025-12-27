@@ -10,7 +10,7 @@
 
 <style>
 body {
-  background:#0f1f0f;
+  background:#0b1a0b;
   color:#7CFF7C;
   font-family: monospace;
   margin:0;
@@ -23,44 +23,46 @@ h1 {
   gap:10px;
 }
 
-h2 {
-  cursor:pointer;
-  margin-top:20px;
-}
-
 .category {
   border:1px solid #3aff3a;
-  padding:10px;
   margin-bottom:10px;
 }
 
+.category h2 {
+  margin:0;
+  padding:8px;
+  background:#122812;
+  cursor:pointer;
+}
+
+.items {
+  padding:8px;
+}
+
 .item {
-  display:flex;
+  display:grid;
+  grid-template-columns: 1fr 60px 60px 40px;
   gap:5px;
-  margin:5px 0;
+  align-items:center;
+  margin-bottom:6px;
 }
 
 input, button {
   background:#000;
   color:#7CFF7C;
   border:1px solid #3aff3a;
-  padding:5px;
-}
-
-button {
-  cursor:pointer;
+  padding:4px;
 }
 
 .progress {
-  height:6px;
+  height:5px;
   background:#1f3f1f;
-  margin-top:4px;
+  grid-column:1 / -1;
 }
 
 .progress-bar {
-  height:6px;
+  height:5px;
   background:#7CFF7C;
-  width:0%;
 }
 </style>
 </head>
@@ -73,102 +75,111 @@ button {
 </h1>
 
 <h3>Adicionar item</h3>
-<input id="itemName" placeholder="Item">
-<input id="itemCategory" placeholder="Categoria">
-<input id="itemHave" type="number" placeholder="Qtd atual">
-<input id="itemGoal" type="number" placeholder="Meta anual">
+<input id="name" placeholder="Item">
+<input id="category" placeholder="Categoria">
+<input id="have" type="number" placeholder="Qtd atual">
+<input id="goal" type="number" placeholder="Meta anual">
 <button onclick="addItem()">Adicionar</button>
 
-<div id="categories"></div>
+<div id="app"></div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("estoque")) || {};
+const initialData = {
+  "Alimentos": [
+    {name:"Arroz", have:16, goal:32},
+    {name:"Feijão", have:4, goal:12},
+    {name:"Macarrão", have:2, goal:12},
+    {name:"Açúcar", have:4.5, goal:10},
+    {name:"Óleo", have:4, goal:12},
+    {name:"Sal", have:1, goal:2}
+  ],
+  "Higiene": [
+    {name:"Sabonete antibacteriano", have:14, goal:40},
+    {name:"Sabonete comum", have:7, goal:40},
+    {name:"Pasta de dente", have:5, goal:12},
+    {name:"Desodorante", have:2, goal:12}
+  ],
+  "Limpeza": [
+    {name:"Sabão em barra", have:10, goal:24},
+    {name:"Bucha", have:2, goal:12},
+    {name:"Papel toalha", have:1, goal:12}
+  ]
+};
 
-function normalizeCategory(name) {
-  return name.trim().toLowerCase();
+let data = JSON.parse(localStorage.getItem("estoque"));
+if (!data) {
+  data = initialData;
+  save();
 }
 
-function addItem() {
-  const name = itemName.value.trim();
-  const categoryRaw = itemCategory.value.trim();
-  const have = Number(itemHave.value);
-  const goal = Number(itemGoal.value);
+function normalize(t){ return t.trim().toLowerCase(); }
 
-  if (!name || !categoryRaw) return;
+function addItem(){
+  const n = name.value.trim();
+  const cRaw = category.value.trim();
+  const h = Number(have.value);
+  const g = Number(goal.value);
+  if(!n || !cRaw) return;
 
-  const normalized = normalizeCategory(categoryRaw);
-
-  // 🔹 procura categoria existente
-  let categoryKey = Object.keys(data).find(
-    c => normalizeCategory(c) === normalized
-  );
-
-  if (!categoryKey) {
-    categoryKey = categoryRaw;
-    data[categoryKey] = [];
+  let c = Object.keys(data).find(x => normalize(x) === normalize(cRaw));
+  if(!c){
+    c = cRaw;
+    data[c] = [];
   }
 
-  data[categoryKey].push({
-    name,
-    have,
-    goal
-  });
-
-  save();
-  render();
+  data[c].push({name:n, have:h, goal:g});
+  save(); render();
 }
 
-function removeItem(category, index) {
-  data[category].splice(index,1);
-  if (data[category].length === 0) delete data[category];
-  save();
-  render();
+function removeItem(c,i){
+  data[c].splice(i,1);
+  if(data[c].length===0) delete data[c];
+  save(); render();
 }
 
-function render() {
-  const container = document.getElementById("categories");
-  container.innerHTML = "";
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML="";
 
-  for (const category in data) {
-    const catDiv = document.createElement("div");
-    catDiv.className = "category";
+  for(const c in data){
+    const box = document.createElement("div");
+    box.className="category";
 
-    const title = document.createElement("h2");
-    title.textContent = category;
-    title.onclick = () => {
-      list.style.display = list.style.display === "none" ? "block" : "none";
-    };
+    const h2 = document.createElement("h2");
+    h2.textContent=c;
 
-    const list = document.createElement("div");
+    const items = document.createElement("div");
+    items.className="items";
 
-    data[category].forEach((item, i) => {
-      const div = document.createElement("div");
-      div.className = "item";
+    h2.onclick=()=> items.style.display = items.style.display==="none"?"block":"none";
 
-      const percent = item.goal ? Math.min(100, Math.round((item.have/item.goal)*100)) : 0;
+    data[c].forEach((it,i)=>{
+      const pct = it.goal?Math.min(100,Math.round(it.have/it.goal*100)):0;
 
-      div.innerHTML = `
-        ${item.name}
-        <input type="number" value="${item.have}" onchange="data['${category}'][${i}].have=this.value;save();render()">
-        / ${item.goal}
-        <button onclick="removeItem('${category}',${i})">X</button>
-        <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
+      const row = document.createElement("div");
+      row.className="item";
+      row.innerHTML=`
+        ${it.name}
+        <input type="number" value="${it.have}"
+          onchange="data['${c}'][${i}].have=this.value;save();render()">
+        ${it.goal}
+        <button onclick="removeItem('${c}',${i})">X</button>
+        <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
       `;
-      list.appendChild(div);
+      items.appendChild(row);
     });
 
-    catDiv.appendChild(title);
-    catDiv.appendChild(list);
-    container.appendChild(catDiv);
+    box.appendChild(h2);
+    box.appendChild(items);
+    app.appendChild(box);
   }
 }
 
-function save() {
+function save(){
   localStorage.setItem("estoque", JSON.stringify(data));
 }
 
 render();
 </script>
-
 </body>
 </html>
