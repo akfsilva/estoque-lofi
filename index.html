@@ -6,110 +6,86 @@
 <title>Estoque Doméstico</title>
 
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
+<link rel="icon" href="main/icon-192.png">
 
 <style>
-:root {
+:root{
   --bg:#0b1a12;
   --panel:#102a1c;
-  --text:#b6ffb6;
+  --text:#c9ffd0;
   --accent:#4cff4c;
-  --warning:#ffcc00;
+  --warn:#ffcc00;
   --danger:#ff5555;
   --border:#2cff6a;
 }
 
-* { box-sizing:border-box; font-family:"Courier New", monospace; }
+*{box-sizing:border-box;font-family:"Courier New",monospace}
 
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
+body{margin:0;background:var(--bg);color:var(--text)}
+
+header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;border-bottom:2px solid var(--border)
 }
-
-header {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:16px;
-  border-bottom:2px solid var(--border);
+header img{
+  width:40px;height:40px;
+  image-rendering:pixelated
 }
+h1{margin:0;font-size:1.3rem}
 
-header img {
-  width:48px;
-  height:48px;
-  image-rendering:pixelated;
-}
+main{padding:16px}
 
-h1 { margin:0; font-size:1.4rem; }
-
-main { padding:16px; }
-
-section {
+section{
   background:var(--panel);
   border:2px solid var(--border);
-  padding:12px;
-  margin-bottom:16px;
+  padding:12px;margin-bottom:16px
 }
 
-h2 {
-  margin-top:0;
-  font-size:1.1rem;
-  border-bottom:1px solid var(--border);
-  padding-bottom:4px;
-}
+h2{margin:0 0 8px 0;font-size:1.1rem}
 
-input, button {
-  background:black;
-  color:var(--text);
+input,button{
+  background:black;color:var(--text);
   border:1px solid var(--border);
-  padding:6px;
-  margin:4px 0;
+  padding:5px;margin:3px 0
 }
+button{cursor:pointer}
+button.danger{color:var(--danger);border-color:var(--danger)}
 
-button { cursor:pointer; }
-
-button.danger {
-  color:var(--danger);
-  border-color:var(--danger);
+.category{
+  border:1px solid var(--border);
+  margin-bottom:10px
 }
+.cat-header{
+  padding:8px;
+  cursor:pointer;
+  background:#07160e;
+  font-weight:bold
+}
+.cat-body{padding:8px;display:none}
 
-.item {
+.item{
   border-bottom:1px dashed var(--border);
-  padding:8px 0;
+  padding:6px 0
 }
+.item:last-child{border-bottom:none}
 
-.item:last-child { border-bottom:none; }
-
-strong { color:var(--accent); }
-
-.progress {
+.progress{
   background:black;
   border:1px solid var(--border);
-  height:14px;
-  margin-top:6px;
+  height:12px;margin-top:4px
 }
+.bar{height:100%;background:var(--accent)}
+.low .bar{background:var(--danger)}
+.mid .bar{background:var(--warn)}
 
-.progress-bar {
-  height:100%;
-  background:var(--accent);
-}
-
-.progress.low .progress-bar { background:var(--danger); }
-.progress.mid .progress-bar { background:var(--warning); }
-
-.alert {
-  color:var(--danger);
-  font-size:0.85rem;
-  margin-top:4px;
-}
+.alert{font-size:.8rem;color:var(--danger)}
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="icon-192.png">
+  <img src="main/icon-192.png">
   <h1>Estoque Doméstico</h1>
 </header>
 
@@ -117,89 +93,116 @@ strong { color:var(--accent); }
 
 <section>
 <h2>Adicionar item</h2>
-<input id="name" placeholder="Nome do item">
-<input id="category" placeholder="Categoria">
-<input id="qty" type="number" placeholder="Qtd atual">
-<input id="goal" type="number" placeholder="Meta anual">
+<input id="n" placeholder="Nome">
+<input id="c" placeholder="Categoria">
+<input id="q" type="number" placeholder="Qtd atual">
+<input id="g" type="number" placeholder="Meta anual">
 <br>
-<button onclick="addItem()">Adicionar</button>
+<button onclick="add()">Adicionar</button>
 </section>
 
 <section>
-<h2>Itens em estoque</h2>
-<div id="list"></div>
+<h2>Estoque</h2>
+<div id="estoque"></div>
 </section>
 
 </main>
 
 <script>
-const KEY="estoque_domestico";
+const KEY="estoque_domestico_vfinal";
 
-let items = JSON.parse(localStorage.getItem(KEY)) || [
-  {id:1,name:"Arroz",category:"Alimentos",qty:2,goal:12},
-  {id:2,name:"Feijão",category:"Alimentos",qty:1,goal:12},
-  {id:3,name:"Macarrão",category:"Alimentos",qty:4,goal:12},
-  {id:4,name:"Papel toalha",category:"Limpeza",qty:2,goal:6}
+const baseItems=[
+  // ALIMENTOS
+  {name:"Arroz",cat:"Alimentos",qty:16,goal:48},
+  {name:"Feijão",cat:"Alimentos",qty:4,goal:24},
+  {name:"Macarrão parafuso",cat:"Alimentos",qty:2,goal:24},
+  {name:"Sal",cat:"Alimentos",qty:1,goal:2},
+  {name:"Açúcar cristal",cat:"Alimentos",qty:4.5,goal:12},
+  {name:"Óleo de soja",cat:"Alimentos",qty:3,goal:12},
+  {name:"Óleo misto",cat:"Alimentos",qty:1,goal:12},
+  {name:"Molho de tomate",cat:"Alimentos",qty:3,goal:24},
+  {name:"Sardinha",cat:"Alimentos",qty:2,goal:24},
+  {name:"Capuccino",cat:"Alimentos",qty:0.2,goal:1},
+  {name:"Geleia de framboesa",cat:"Alimentos",qty:1,goal:4},
+  {name:"Café descafeinado",cat:"Alimentos",qty:0.25,goal:2},
+
+  // LIMPEZA
+  {name:"Papel toalha",cat:"Limpeza",qty:1,goal:6},
+  {name:"Bucha de cozinha",cat:"Limpeza",qty:8,goal:24},
+  {name:"Sabão em barra",cat:"Limpeza",qty:10,goal:24},
+
+  // HIGIENE
+  {name:"Sabonete antibacteriano",cat:"Higiene",qty:14,goal:48},
+  {name:"Sabonete comum",cat:"Higiene",qty:7,goal:48},
+  {name:"Desodorante antibacteriano",cat:"Higiene",qty:1,goal:12},
+  {name:"Desodorante comum",cat:"Higiene",qty:1,goal:12},
+  {name:"Pasta de dente sensível",cat:"Higiene",qty:2,goal:12},
+  {name:"Pasta de dente comum",cat:"Higiene",qty:3,goal:12}
 ];
 
-function save(){
-  localStorage.setItem(KEY,JSON.stringify(items));
+let items=JSON.parse(localStorage.getItem(KEY));
+if(!items){
+  items=baseItems.map(i=>({...i,id:Date.now()+Math.random()}));
+  save();
 }
 
-function addItem(){
-  const name=document.getElementById("name").value.trim();
-  if(!name) return;
+function save(){localStorage.setItem(KEY,JSON.stringify(items))}
 
+function add(){
   items.push({
     id:Date.now(),
-    name,
-    category:category.value||"Outros",
-    qty:Number(qty.value)||0,
-    goal:Number(goal.value)||0
+    name:n.value,
+    cat:c.value||"Outros",
+    qty:+q.value||0,
+    goal:+g.value||0
   });
-
-  save(); render();
-  name.value=category.value=qty.value=goal.value="";
+  save();render();
+  n.value=c.value=q.value=g.value="";
 }
 
-function updateQty(id,val){
-  items.find(i=>i.id===id).qty=Number(val);
-  save(); render();
-}
-
-function updateGoal(id,val){
-  items.find(i=>i.id===id).goal=Number(val);
-  save(); render();
-}
-
-function removeItem(id){
+function del(id){
   items=items.filter(i=>i.id!==id);
-  save(); render();
+  save();render();
+}
+
+function upd(id,key,val){
+  items.find(i=>i.id===id)[key]=+val;
+  save();render();
+}
+
+function toggle(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==="none"?"block":"none";
 }
 
 function render(){
-  const list=document.getElementById("list");
-  list.innerHTML="";
+  const out=document.getElementById("estoque");
+  out.innerHTML="";
+  const cats=[...new Set(items.map(i=>i.cat))];
 
-  items.forEach(i=>{
-    const pct=i.goal?Math.min(100,(i.qty/i.goal)*100):0;
-    let cls="progress";
-    let alert="";
-
-    if(pct<30){ cls+=" low"; alert="⚠ Estoque crítico"; }
-    else if(pct<60){ cls+=" mid"; }
-
-    list.innerHTML+=`
-    <div class="item">
-      <strong>${i.name}</strong> [${i.category}]<br>
-      Atual: <input type="number" value="${i.qty}" onchange="updateQty(${i.id},this.value)">
-      Meta: <input type="number" value="${i.goal}" onchange="updateGoal(${i.id},this.value)">
-      <div class="${cls}">
-        <div class="progress-bar" style="width:${pct}%"></div>
-      </div>
-      ${alert?`<div class="alert">${alert}</div>`:""}
-      <button class="danger" onclick="removeItem(${i.id})">Excluir</button>
-    </div>`;
+  cats.forEach(cat=>{
+    const cid="cat_"+cat.replace(/\s/g,"");
+    out.innerHTML+=`
+      <div class="category">
+        <div class="cat-header" onclick="toggle('${cid}')">${cat}</div>
+        <div class="cat-body" id="${cid}">
+          ${items.filter(i=>i.cat===cat).map(i=>{
+            const p=i.goal?Math.min(100,i.qty/i.goal*100):0;
+            const cls=p<30?"low":p<60?"mid":"";
+            return `
+            <div class="item">
+              <b>${i.name}</b><br>
+              Atual <input type="number" value="${i.qty}" onchange="upd(${i.id},'qty',this.value)">
+              Meta <input type="number" value="${i.goal}" onchange="upd(${i.id},'goal',this.value)">
+              <div class="progress ${cls}">
+                <div class="bar" style="width:${p}%"></div>
+              </div>
+              ${p<30?'<div class="alert">⚠ Estoque crítico</div>':''}
+              <button class="danger" onclick="del(${i.id})">Excluir</button>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>`;
   });
 }
 
