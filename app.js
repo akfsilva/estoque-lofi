@@ -27,7 +27,6 @@ function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
 function calculateGoal(dailyCons) {
     const p = +document.getElementById('calc_pessoas').value || 1;
     const m = +document.getElementById('calc_meses').value || 1;
-    // Retorna valor arredondado
     return Math.round(dailyCons * p * (m * 30.41));
 }
 
@@ -59,7 +58,7 @@ window.upd = function(id, key, val){
 
 window.applyMeta = function(id, val) {
     const item = items.find(i => i.id === id);
-    if(item) { item.goal = val; save(); render(); }
+    if(item) { item.goal = Math.round(val); save(); render(); }
 };
 
 window.del = function(id){
