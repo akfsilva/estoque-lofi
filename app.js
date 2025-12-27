@@ -27,6 +27,11 @@ const baseItems = [
 let items = JSON.parse(localStorage.getItem(KEY)) || baseItems.map(i => ({...i, id: Date.now() + Math.random()}));
 
 function save(){ 
+    items.forEach(i => {
+        i.cat = String(i.cat).trim().toUpperCase();
+        i.name = String(i.name).trim().toUpperCase();
+        i.unit = String(i.unit).trim().toUpperCase();
+    });
     localStorage.setItem(KEY, JSON.stringify(items)); 
 }
 
@@ -41,11 +46,13 @@ window.add = function(){
     if(!n) return;
     const consVal = +document.getElementById('cons').value || 0;
     const pVal = +document.getElementById('p_item').value || 1;
+    const catInput = (document.getElementById('c').value.trim() || "GERAL").toUpperCase();
+
     items.push({
         id: Date.now() + Math.random(),
         name: n.toUpperCase(), 
-        cat: (document.getElementById('c').value || "GERAL").toUpperCase(),
-        unit: (document.getElementById('u').value || "UN").toUpperCase(),
+        cat: catInput,
+        unit: (document.getElementById('u').value.trim() || "UN").toUpperCase(),
         qty: +document.getElementById('q').value || 0,
         cons: consVal,
         persons: pVal,
@@ -59,7 +66,13 @@ window.add = function(){
 window.upd = function(id, key, val){
     const item = items.find(i => i.id === id);
     if(item) { 
-        item[key] = (key === 'cat' || key === 'unit' || key === 'note' || key === 'name') ? val.toUpperCase() : parseFloat(val) || 0; 
+        if(['cat', 'unit', 'name'].includes(key)) {
+            item[key] = String(val).trim().toUpperCase();
+        } else if(key === 'note') {
+            item[key] = val;
+        } else {
+            item[key] = parseFloat(val) || 0;
+        }
         save(); render(); 
     }
 };
@@ -76,10 +89,12 @@ window.del = function(id){
 window.render = function(){
     const out = document.getElementById("estoque");
     out.innerHTML = "";
-    const cats = [...new Set(items.map(i => i.cat.toUpperCase()))].sort();
+    
+    // Força a limpeza de espaços antes de agrupar
+    const cats = [...new Set(items.map(i => i.cat.trim().toUpperCase()))].sort();
     
     cats.forEach(cat => {
-        const catItems = items.filter(i => i.cat === cat);
+        const catItems = items.filter(i => i.cat.trim().toUpperCase() === cat);
         const html = catItems.map(i => {
             const suggested = calculateGoal(i.cons || 0, i.persons || 1);
             const p = i.goal ? Math.min(100, (i.qty / i.goal) * 100) : 0;
