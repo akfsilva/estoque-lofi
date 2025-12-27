@@ -1,3 +1,4 @@
+// Mudamos a chave para v2 para limpar dados antigos que estavam duplicando
 const KEY = "estoque_v2";
 
 const baseItems = [
@@ -24,15 +25,15 @@ const baseItems = [
   {name:"Pasta de dente comum",cat:"HIGIENE",qty:3,goal:12}
 ];
 
-// Carrega e limpa IMEDIATAMENTE os dados para evitar duplicidade por erro de digitação
 let items = JSON.parse(localStorage.getItem(KEY)) || baseItems.map(i => ({...i, id: Date.now() + Math.random()}));
+
+// Garante que tudo carregado esteja em maiúsculas e sem espaços extras
 items = items.map(i => ({...i, cat: i.cat.trim().toUpperCase()}));
 
 function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
 
 window.add = function(){
   const nome = document.getElementById('n').value.trim();
-  // Força a categoria a ser sempre MAIÚSCULA e sem espaços
   const categoriaInput = document.getElementById('c').value.trim().toUpperCase() || "OUTROS";
   
   if(nome){
@@ -61,21 +62,13 @@ window.upd = function(id, key, val){
   if(item) {
     item[key] = parseFloat(val) || 0;
     save();
-    const container = document.querySelector(`[data-id="${id}"]`);
-    if(container){
-        const p = item.goal ? Math.min(100, (item.qty / item.goal) * 100) : 0;
-        container.querySelector('.bar').style.width = p + "%";
-        container.querySelector('.pct').innerText = p.toFixed(0) + "%";
-        container.querySelector('.progress').className = `progress ${p < 30 ? 'low' : p < 60 ? 'mid' : ''}`;
-    }
+    render(); // Renderização simplificada para garantir atualização visual
   }
 };
 
 window.toggle = function(id){
   const el = document.getElementById(id);
-  if(el) {
-    el.style.display = (el.style.display === "block") ? "none" : "block";
-  }
+  if(el) el.style.display = (el.style.display === "block") ? "none" : "block";
 };
 
 window.exportData = function() {
@@ -92,9 +85,7 @@ window.importData = function(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            items = JSON.parse(e.target.result);
-            // Limpa os dados importados também
-            items = items.map(i => ({...i, cat: i.cat.trim().toUpperCase()}));
+            items = JSON.parse(e.target.result).map(i => ({...i, cat: i.cat.trim().toUpperCase()}));
             save(); location.reload();
         } catch(err) { alert("ERRO NO ARQUIVO!"); }
     };
@@ -106,13 +97,11 @@ function render(){
   if(!out) return;
   out.innerHTML = "";
 
-  // Cria a lista de categorias únicas baseada nos itens atuais
+  // Obtém categorias únicas sempre em MAIÚSCULAS
   const uniqueCats = [...new Set(items.map(i => i.cat))].sort();
 
   uniqueCats.forEach(cat => {
-    // Cria um ID seguro para o collapse (remove espaços e caracteres especiais)
-    const cid = "cat_" + cat.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, "");
-    
+    const cid = "cat_" + cat.replace(/[^a-zA-Z0-9]/g, "");
     const catDiv = document.createElement("div");
     catDiv.className = "category";
     
@@ -129,25 +118,16 @@ function render(){
             <div><label>META</label><input type="number" step="0.01" value="${i.goal}" onchange="upd(${i.id},'goal',this.value)"></div>
           </div>
           <div class="progress ${cls}"><div class="bar" style="width:${p}%"></div></div>
-          ${p < 30 ? '<div class="alert" style="color:#ff3e3e; font-size:10px; margin:5px 0;">ALERTA: ESTOQUE BAIXO</div>' : ''}
-          <button class="danger" onclick="del(${i.id})" style="margin-top:10px; background:rgba(255,0,0,0.1); border:1px solid #ff3e3e; color:#ff3e3e; width:100%; padding:5px; cursor:pointer;">REMOVER ITEM</button>
+          ${p < 30 ? '<div class="alert">ALERTA: ESTOQUE BAIXO</div>' : ''}
+          <button class="danger" onclick="del(${i.id})">REMOVER ITEM</button>
         </div>`;
     }).join("");
 
     catDiv.innerHTML = `
-      <div class="cat-header" onclick="toggle('${cid}')" style="cursor:pointer; padding:10px; border:1px solid #00ff00; margin-top:10px; background:rgba(0,255,0,0.05)">
-        ${cat}
-      </div>
-      <div class="cat-body" id="${cid}" style="display:none; padding:10px; border:1px solid #00ff00; border-top:none;">
-        ${itemsHtml}
-      </div>`;
+      <div class="cat-header" onclick="toggle('${cid}')">${cat}</div>
+      <div class="cat-body" id="${cid}" style="display:none;">${itemsHtml}</div>`;
     out.appendChild(catDiv);
   });
 }
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
-}
-
 render();
-
