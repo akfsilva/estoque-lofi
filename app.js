@@ -14,9 +14,9 @@ const baseItems = [
   {name:"Óleo misto", cat:"ALIMENTOS", unit:"L", qty:1, goal:4, cons:0.010, note:""},
   {name:"Molho de tomate", cat:"ALIMENTOS", unit:"SACHÊ", qty:3, goal:24, cons:0.050, note:""},
   {name:"Sardinha", cat:"ALIMENTOS", unit:"UN", qty:2, goal:24, cons:0.040, note:""},
-  {name:"Capuccino", cat:"ALIMENTOS", unit:"G", qty:200, goal:1000, cons:10, note:""},
+  {name:"Capuccino", cat:"ALIMENTOS", unit:"KG", qty:0.2, goal:1, cons:0.010, note:""},
   {name:"Geleia de framboesa", cat:"ALIMENTOS", unit:"UN", qty:1, goal:4, cons:0.010, note:""},
-  {name:"Café descafeinado", cat:"ALIMENTOS", unit:"G", qty:250, goal:1000, cons:10, note:""},
+  {name:"Café descafeinado", cat:"ALIMENTOS", unit:"KG", qty:0.25, goal:1, cons:0.010, note:""},
   {name:"Sabonete antibacteriano", cat:"HIGIENE", unit:"UN", qty:14, goal:48, cons:0.100, note:""},
   {name:"Sabonete normal", cat:"HIGIENE", unit:"UN", qty:7, goal:24, cons:0.100, note:""},
   {name:"Desodorante antibacteriano", cat:"HIGIENE", unit:"UN", qty:1, goal:12, cons:0.030, note:""},
@@ -81,7 +81,7 @@ window.applyMeta = function(id, val) {
 };
 
 window.del = function(id){
-    if(confirm("REMOVER ITEM?")){ items = items.filter(i => i.id !== id); save(); render(); }
+    if(confirm("CONFIRMAR REMOÇÃO?")){ items = items.filter(i => i.id !== id); save(); render(); }
 };
 
 window.toggle = function(id){
@@ -112,12 +112,13 @@ function render(){
                         <button style="width:auto; padding:2px 8px; font-size:9px" onclick="applyMeta(${i.id}, ${suggested})">APLICAR</button>
                     </div>
                     <div class="controls">
-                        <div><label>ESTOQUE (${i.unit})</label><input type="number" step="0.01" value="${i.qty}" onchange="upd(${i.id},'qty',this.value)"></div>
-                        <div><label>META (${i.unit})</label><input type="number" step="1" value="${Math.round(i.goal)}" onchange="upd(${i.id},'goal',this.value)"></div>
+                        <div><label>ESTOQUE</label><input type="number" step="0.01" value="${i.qty}" onchange="upd(${i.id},'qty',this.value)"></div>
+                        <div><label>META</label><input type="number" step="1" value="${Math.round(i.goal)}" onchange="upd(${i.id},'goal',this.value)"></div>
+                        <div><label>UNID.</label><input type="text" value="${i.unit}" onchange="upd(${i.id},'unit',this.value)"></div>
                     </div>
                     <div class="progress ${p < 30 ? 'low' : ''}"><div class="bar" style="width:${p}%"></div></div>
-                    <div style="margin-top:10px">
-                        <label>NOTAS TÉCNICAS</label>
+                    <div>
+                        <label>NOTAS</label>
                         <input type="text" class="note-input" value="${i.note || ''}" placeholder="..." onchange="upd(${i.id},'note',this.value)">
                     </div>
                     <button class="danger" onclick="del(${i.id})">REMOVER</button>
