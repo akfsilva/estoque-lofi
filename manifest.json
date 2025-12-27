@@ -1,20 +1,21 @@
 {
-  "name": "Vault-Tec Stock",
+  "name": "VAULT-TEC STOCK SYSTEM",
   "short_name": "VaultStock",
-  "description": "Sistema de Gestão de Inventário de Sobrevivência",
+  "description": "Sistema de Inventário de Sobrevivência Vault-Tec",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#050a05",
   "theme_color": "#20ff39",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/Fortis-Solutions/Vault-Stock/main/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://raw.githubusercontent.com/Fortis-Solutions/Vault-Stock/main/icon-192.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
