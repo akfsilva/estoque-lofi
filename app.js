@@ -24,13 +24,15 @@ const baseItems = [
   {name:"PAPEL TOALHA (PACOTE C/ 2)", cat:"LIMPEZA", unit:"UN", qty:1, goal:12, cons:0.050, persons:1, note:""}
 ];
 
+// Estado global para lembrar quais categorias estão abertas
+let collapsedState = {};
+
 let items = JSON.parse(localStorage.getItem(KEY)) || baseItems.map(i => ({...i, id: Date.now() + Math.random()}));
 
 function save(){ 
     items.forEach(i => {
         i.cat = String(i.cat).trim().toUpperCase();
         i.name = String(i.name).trim().toUpperCase();
-        i.unit = String(i.unit).trim().toUpperCase();
     });
     localStorage.setItem(KEY, JSON.stringify(items)); 
 }
@@ -40,6 +42,11 @@ function calculateGoal(dailyCons, itemPersons) {
     const p = itemPersons || 1;
     return Math.round(dailyCons * p * (m * 30.41));
 }
+
+window.toggleCat = function(catName) {
+    collapsedState[catName] = !collapsedState[catName];
+    render();
+};
 
 window.add = function(){
     const n = document.getElementById('n').value.trim();
@@ -66,13 +73,7 @@ window.add = function(){
 window.upd = function(id, key, val){
     const item = items.find(i => i.id === id);
     if(item) { 
-        if(['cat', 'unit', 'name'].includes(key)) {
-            item[key] = String(val).trim().toUpperCase();
-        } else if(key === 'note') {
-            item[key] = val;
-        } else {
-            item[key] = parseFloat(val) || 0;
-        }
+        item[key] = (['cat', 'unit', 'name'].includes(key)) ? String(val).trim().toUpperCase() : (key === 'note' ? val : parseFloat(val) || 0);
         save(); render(); 
     }
 };
@@ -92,15 +93,17 @@ window.render = function(){
     const cats = [...new Set(items.map(i => i.cat.trim().toUpperCase()))].sort();
     
     cats.forEach(cat => {
-        const catItems = items.filter(i => i.cat.trim().toUpperCase() === cat);
+        const catItems = items.filter(i => i.cat === cat);
+        const isVisible = collapsedState[cat] ? "" : "hidden";
+        
         const html = catItems.map(i => {
             const suggested = calculateGoal(i.cons || 0, i.persons || 1);
             const p = i.goal ? Math.min(100, (i.qty / i.goal) * 100) : 0;
             return `
                 <div class="item">
-                    <div class="item-info"><span>> ${i.name}</span> <span>${i.qty} ${i.unit} (${p.toFixed(0)}%)</span></div>
+                    <div class="item-info"><span>> ${i.name}</span> <span>${i.qty} ${i.unit}</span></div>
                     <div class="suggested-box">
-                        <span>SUGESTÃO (${i.persons || 1} PES.): ${suggested} ${i.unit}</span>
+                        <span>SUG. (${i.persons} PES.): ${suggested} ${i.unit}</span>
                         <button style="width:auto; padding:5px 10px; font-size:9px" onclick="applyMeta(${i.id}, ${suggested})">APLICAR</button>
                     </div>
                     <div class="controls">
@@ -110,14 +113,16 @@ window.render = function(){
                         <div><label>UNID</label><input type="text" value="${i.unit}" onchange="upd(${i.id},'unit',this.value)"></div>
                     </div>
                     <div class="progress ${p < 30 ? 'low' : ''}"><div class="bar" style="width:${p}%"></div></div>
-                    <input type="text" style="font-size:11px; background:transparent; border:1px dashed var(--green); color:var(--green); width:100%; padding:5px; outline:none;" value="${i.note || ''}" placeholder="NOTAS" onchange="upd(${i.id},'note',this.value)">
+                    <input type="text" style="font-size:11px; background:transparent; border:1px dashed var(--green); color:var(--green); width:100%; padding:5px;" value="${i.note || ''}" placeholder="NOTAS" onchange="upd(${i.id},'note',this.value)">
                     <button class="danger" onclick="del(${i.id})">DELETAR</button>
                 </div>`;
         }).join("");
         
         const div = document.createElement("div");
         div.className = "category";
-        div.innerHTML = `<div class="cat-header">${cat}</div><div>${html}</div>`;
+        div.innerHTML = `
+            <div class="cat-header" onclick="toggleCat('${cat}')">${cat} ${collapsedState[cat] ? '[-]' : '[+]'}</div>
+            <div class="cat-content ${isVisible}">${html}</div>`;
         out.appendChild(div);
     });
 }
