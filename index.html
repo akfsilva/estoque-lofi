@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VAULT-TEC STOCK</title>
-    <link rel="icon" href="icon.png" type="image/png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="terminal">
         <header>
-            <img src="icon.png" alt="Vault-Tec" class="vault-logo" style="width: 50px; height: 50px; display: block; margin: 0 auto 10px;">
+            <img src="icon-192.png" alt="VAULT-TEC" class="vault-logo">
             <h1>> VAULT-TEC INVENTORY_</h1>
             <div class="global-settings">
                 <div class="input-group">
@@ -27,7 +27,7 @@
         </header>
 
         <section class="add-box">
-            <h3>[ ADICIONAR NOVO ITEM ]</h3>
+            <h3>[ ADICIONAR ITEM ]</h3>
             <div class="grid-form">
                 <input type="text" id="n" placeholder="NOME DO ITEM">
                 <input type="text" id="c" placeholder="CATEGORIA">
@@ -35,14 +35,14 @@
                 <input type="number" id="q" placeholder="QTD ATUAL">
                 <input type="number" id="cons" placeholder="CONS. DIÁRIO">
                 <input type="text" id="obs" placeholder="NOTAS">
+                <button onclick="add()">REGISTRAR NO SISTEMA</button>
             </div>
-            <button onclick="add()">REGISTRAR NO BANCO DE DADOS</button>
         </section>
 
         <div id="estoque"></div>
 
         <footer>
-            <button class="safe" onclick="exportData()">EXPORTAR BACKUP</button>
+            <button class="safe-btn" onclick="exportData()">EXPORTAR BACKUP</button>
             <label class="safe-label">
                 IMPORTAR BACKUP
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
