@@ -6,7 +6,9 @@
     <title>VAULT-TEC STOCK SYSTEM</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Fortis-Solutions/Vault-Stock/main/icon-192.png">
+    <meta name="theme-color" content="#20ff39">
+    <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
     <div class="scanline"></div>
@@ -82,5 +84,11 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+        // Registro do Service Worker para modo offline e instalação
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
