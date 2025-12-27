@@ -10,39 +10,37 @@
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <div class="scanline"></div>
     <div class="terminal">
         <header>
             <img src="icon-192.png" alt="VAULT-TEC" class="vault-logo">
             <h1>> VAULT-TEC INVENTORY_</h1>
             <div class="global-settings">
                 <div class="input-group">
-                    <label>PESSOAS:</label>
-                    <input type="number" id="calc_pessoas" value="1">
-                </div>
-                <div class="input-group">
-                    <label>MESES:</label>
-                    <input type="number" id="calc_meses" value="12">
+                    <label>MESES (GERAL)</label>
+                    <input type="number" id="calc_meses" value="12" onchange="render()">
                 </div>
             </div>
         </header>
 
         <section class="add-box">
-            <h3>[ ADICIONAR ITEM ]</h3>
+            <h3>[ REGISTRAR NOVO ITEM ]</h3>
             <div class="grid-form">
                 <input type="text" id="n" placeholder="NOME DO ITEM">
                 <input type="text" id="c" placeholder="CATEGORIA">
                 <input type="text" id="u" placeholder="UNIDADE (KG, L, UN)">
                 <input type="number" id="q" placeholder="QTD ATUAL">
-                <input type="number" id="cons" placeholder="CONS. DIÁRIO">
+                <input type="number" id="cons" placeholder="CONS. DIARIO">
+                <input type="number" id="p_item" placeholder="PESSOAS P/ ESTE ITEM" value="1">
                 <input type="text" id="obs" placeholder="NOTAS">
-                <button onclick="add()">REGISTRAR NO SISTEMA</button>
+                <button onclick="add()">REGISTRAR NO BANCO DE DADOS</button>
             </div>
         </section>
 
         <div id="estoque"></div>
 
         <footer>
-            <button class="safe-btn" onclick="exportData()">EXPORTAR BACKUP</button>
+            <button class="safe-btn" onclick="exportData()">EXPORTAR BACKUP (.JSON)</button>
             <label class="safe-label">
                 IMPORTAR BACKUP
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
@@ -50,10 +48,5 @@
         </footer>
     </div>
     <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
 </body>
 </html>
