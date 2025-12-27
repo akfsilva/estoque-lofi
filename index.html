@@ -6,6 +6,7 @@
     <title>VAULT-TEC STOCK SYSTEM</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
     <meta name="theme-color" content="#20ff39">
     <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
@@ -14,18 +15,10 @@
     <div class="crt-overlay"></div>
 
     <header>
-        <div class="logo-container">
-            <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" stroke="#20ff39" stroke-width="5" fill="none" />
-                <path d="M30 40 Q50 10 70 40 L70 70 Q50 90 30 70 Z" fill="#20ff39" />
-                <circle cx="40" cy="45" r="3" fill="#050a05" />
-                <circle cx="60" cy="45" r="3" fill="#050a05" />
-                <path d="M45 60 Q50 65 55 60" stroke="#050a05" stroke-width="2" fill="none" />
-            </svg>
-        </div>
+        <img src="icon-192.png" alt="Vault Boy" class="logo">
         <div class="header-info">
             <h1>VAULT-TEC STOCK</h1>
-            <span class="version">ESTADO: OPERACIONAL | v2.6</span>
+            <span class="version">ESTADO: OPERACIONAL | v2.5</span>
         </div>
     </header>
 
@@ -80,7 +73,10 @@
 
     <script src="app.js"></script>
     <script>
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
+
 </html>
