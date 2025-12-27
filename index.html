@@ -3,40 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vault-Tec Stock</title>
+    <title>VAULT-TEC STOCK</title>
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <div class="header">
-        <img src="icon-192.png" alt="Vault Boy" width="40">
+
+    <header>
+        <img src="icon-192.png" alt="Vault Boy" class="logo">
         <h1>VAULT-TEC STOCK</h1>
-    </div>
+    </header>
 
     <div class="container">
-        <div class="card">
-            <h3>LOG NOVO ITEM</h3>
-            <input type="text" id="n" placeholder="NOME DO ITEM">
-            <input type="text" id="c" placeholder="CATEGORIA">
-            <div class="controls">
-                <div><label>ATUAL</label><input type="number" id="q" value="0"></div>
-                <div><label>META</label><input type="number" id="g" value="0"></div>
+        <section class="card">
+            <h2 class="section-title">LOG NOVO ITEM</h2>
+            <input type="text" id="n" placeholder="Nome do Item">
+            <input type="text" id="c" placeholder="Categoria">
+            <div class="input-row">
+                <div>
+                    <label>ATUAL</label>
+                    <input type="number" id="q" value="0">
+                </div>
+                <div>
+                    <label>META</label>
+                    <input type="number" id="g" value="0">
+                </div>
             </div>
             <button onclick="add()">EXECUTAR ENTRADA</button>
-        </div>
+        </section>
 
         <div id="estoque"></div>
 
-        <div class="card terminal">
-            <h3>TERMINAL DE DADOS</h3>
-            <div class="controls">
+        <section class="card terminal">
+            <h2 class="section-title">TERMINAL DE DADOS</h2>
+            <div class="btn-group">
                 <button onclick="exportData()">EXPORTAR JSON</button>
-                <button onclick="document.getElementById('fileInput').click()">IMPORTAR JSON</button>
-                <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
+                <button onclick="document.getElementById('importFile').click()">IMPORTAR JSON</button>
+                <input type="file" id="importFile" style="display:none" onchange="importData(event)">
             </div>
-        </div>
+        </section>
     </div>
 
-    <script src="app.js?v=2"></script>
+    <script src="app.js"></script>
 </body>
 </html>
